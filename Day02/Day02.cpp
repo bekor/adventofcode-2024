@@ -47,14 +47,25 @@ bool isMovingInDirectionWDampening(const auto& report, std::function<bool(int, i
         if (compare(previous, current)) {
             if (isStepSmallerThanThree(previous, current)) {
                 countDump++;
-                continue;
+                if (i < 2) {
+                    previous = report.at(i - 1);
+                }
+                else {
+                    previous = report.at(i - 2);
+                }
+                
             }
+            else {
+                previous = current;
+            }
+        }
+        else if (previous == current) {
+            countDump++;
         }
         else {
             countDump++;
-            continue;
+            previous = report.at(i-2);
         }
-        previous = current;
     }
     return 1 >= countDump ;
 }
@@ -80,12 +91,18 @@ uint32_t countSafeReport(const auto& reports) {
 uint32_t countSafeReportDampened(const auto& reports) {
     uint32_t safereports = 0;
     for (const auto& report : reports) {
-        if (report.at(0) < report.at(report.size()-1)) {
+        auto first = report.at(0);
+        auto second = report.at(1);
+        if (first == second) {
+            second = report.at(3);
+        }
+
+        if (first < second) {
             if (isMovingInDirectionWDampening(report, std::less<int>{})) {
                 safereports++;
             }
         }
-        else if (report.at(0) > report.at(report.size() - 1)) {
+        else if (first > second) {
             if (isMovingInDirectionWDampening(report, std::greater<int>{})) {
                 safereports++;
             }

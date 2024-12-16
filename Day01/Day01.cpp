@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <map>
 
+
 std::pair<int, int> spliToIntPair(const std::string& s, const std::string& delimiter) {
     std::pair<int, int> tokens;
     size_t last = 0; 
@@ -17,11 +18,7 @@ std::pair<int, int> spliToIntPair(const std::string& s, const std::string& delim
     tokens.second = std::stoi(s.substr(last));
     return tokens;
 }
-//
-//template <typename T>
-//concept HasSwap = requires (T a, T b) {
-//
-//}
+
 
 void calculateDifference(auto& leftList, auto& rightList) {
     std::sort(leftList.begin(), leftList.end());
