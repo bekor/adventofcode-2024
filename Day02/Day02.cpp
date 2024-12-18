@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <ranges>
 
 std::vector<int> spliToInt(const std::string& s, const std::string& delimiter) {
     std::vector<int> tokens;
@@ -91,21 +92,29 @@ uint32_t countSafeReport(const auto& reports) {
 uint32_t countSafeReportDampened(const auto& reports) {
     uint32_t safereports = 0;
     for (const auto& report : reports) {
-        auto first = report.at(0);
-        auto second = report.at(1);
-        if (first == second) {
-            second = report.at(3);
-        }
-
-        if (first < second) {
-            if (isMovingInDirectionWDampening(report, std::less<int>{})) {
-                safereports++;
+        bool isSafeReport = false;
+        for (size_t i = 0; i < report.size(); ++i) {
+            std::vector<int> partialReport{};
+            for (size_t inter = 0; inter < report.size(); ++inter) {
+                if (i != inter) {
+                    partialReport.push_back(report.at(inter));
+                }
             }
-        }
-        else if (first > second) {
-            if (isMovingInDirectionWDampening(report, std::greater<int>{})) {
-                safereports++;
+            if (partialReport.at(0) < partialReport.at(1)) {
+                if (isMovingInDirection(partialReport, std::less<int>{})) {
+                    isSafeReport = true;
+                }
             }
+            else if (partialReport.at(0) > partialReport.at(1)) {
+                if (isMovingInDirection(partialReport, std::greater<int>{})) {
+                    isSafeReport = true;
+                }
+            }
+            if (isSafeReport) {
+                safereports++;
+                break;
+            }
+                
         }
     }
     return safereports;
